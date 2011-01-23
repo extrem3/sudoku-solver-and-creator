@@ -1,6 +1,5 @@
 #include <iostream>
 #include <stdlib.h>
-
 #include <fstream>
 #include <string>
 
@@ -27,9 +26,28 @@ int main(int argc, const char *argv[])
 	system("clear");
 
 	int arrField[9][9][2];
-	if (argc == 2) 
+	if (argc >= 2) 
 	{
-		setUpField(arrField, argv[1]);
+		int gridLocation = 0;
+		int solveSettings = 0;
+		for (int i = 1; i < argc; i+=2) 
+		{
+			switch (argv[i][1]) 
+			{
+				case 'g':
+					gridLocation = i + 1;
+					break;
+				case 's':
+					solveSettings = i + 1;
+					break;
+				default:
+					//probably just a grid location
+					gridLocation = i;
+					break;
+			}
+		}
+		cout << "Solving " << argv[gridLocation] << "\n\n";
+		setUpField(arrField, argv[gridLocation]);
 	}else
 	{
 		char a;
@@ -47,7 +65,7 @@ int main(int argc, const char *argv[])
 			for (j = 0; j < 9; ++j) 
 			{
 				traceField(arrField, true);
-				cout << "Insert the number on field marked with \"_\" here and press enter: ";
+				cout << "Insert the number on field marked with \"_\" here and press [ENTER]: ";
 				cin >> a;
 				arrField[i][j][0] = a - '0';
 				system("clear");

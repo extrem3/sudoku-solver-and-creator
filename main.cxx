@@ -2,7 +2,8 @@
 #include <stdlib.h>
 #include <fstream>
 #include <string>
-
+#include <cstdlib>
+#include <time.h>
 
 using std::cin;
 using std::cout;
@@ -12,6 +13,8 @@ using std::ifstream;
 int setUpField(int fieldArr[9][9][2], const char* fileName);
 int solveField(int fieldArr[9][9][2], int lastX = 9, int lastY = 9, int lastTry = 9);
 int analyzeField(int fieldArr[9][9][2]);
+
+int generateField(int fieldArr[9][9][2], int difficulty, int fields = 0);
 
 int getPossible(int x, int y, int fieldArr[9][9][2]);
 int getPossibleHorizontal(int line, int fieldArr[9][9][2]);
@@ -52,7 +55,7 @@ int main(int argc, const char *argv[])
 					break;
 				default:
 					//something went wrong - wrong flag
-					cout << "Unknown flag: -" << argv[i][1] << "\n";
+					cout << "Unknown flag: " << argv[i] << "\n";
 					break;
 			}
 		}
@@ -63,6 +66,7 @@ int main(int argc, const char *argv[])
 		}else 
 		{
 			cout << "\nGenerating an " << argv[gridLocation] << " grid.";
+			generateField(arrField, 2);
 		}
 	}else
 	{
@@ -261,6 +265,36 @@ int analyzeField(int fieldArr[9][9][2])
 	//error. return 0
 	return 0;
 } //end of function analyzeField
+
+
+
+int generateField(int fieldArr[9][9][2], int difficulty, int fields)
+{
+	//generate field is going to work like this:
+	// 	create an empty field (filled with only 0)
+	// 	fill random cells with random numbers
+	// 	solve the entire field
+	// 	recursively remove numbers until you get the desired difficulty
+	//first, create an empty field array
+	for (int i = 0; i < 9; ++i) 
+	{
+		for (int j = 0; j < 9; ++j) 
+		{
+			fieldArr[i][j][0] = 0;
+		}
+	}
+	// generate random numbers
+	srand((unsigned)time(NULL));
+	for (int k = 0; k < 15; ++k) 
+	{
+		cout << int((double(rand())/RAND_MAX) * 9) << "\n";
+	}
+	cout << "\nGenerated field:";
+	traceField(fieldArr);
+	return 1;
+} //end of function generateField
+
+
 
 int getPossible(int x, int y, int fieldArr[9][9][2]) 
 {

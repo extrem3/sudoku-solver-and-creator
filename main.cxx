@@ -23,47 +23,50 @@ int traceField(int fieldArr[9][9][2], bool inserting = false);
 int main(int argc, const char *argv[])
 {
 	//contains the field data
-	system("clear");
-
 	int arrField[9][9][2];
+	int mode = 2;
 	if (argc >= 2) 
 	{
 		// possible calls:
-		// 	./main [gridLocation] -s (all|first)			mode 2
-		// 	./main -d (e|m|h|w) -s (numberOfDigits)			mode 1
-
-		// mode can be 2 for solving and 1 for generating grid
-		int mode = 2;
+		// 	./main [gridLocation] -s (number (0=all,other=numberOfSolutions))			mode=2 		solving grid
+		// 	./main -d (e|m|h|w) -s (numberOfDigits)										mode=1 		generating grid
 		int gridLocation = 1;
 		int solveSettings = 0;
 
 		if (argv[1][0] == '-') 
 			mode = 1;
-		else 
-			mode = 2;
 
+		//check flags only
 		for (int i = mode; i < argc - (mode - 1); i+=2) 
 		{
 			cout << "flag " << argv[i][1] << " is set to " << argv[i + 1] << "\n";
 			switch (argv[i][1]) 
 			{
-				case 'g':
-					// flag -g for grid location
+				case 'd':
+					// flag -d for difficulty
 					gridLocation = i + 1;
 					break;
 				case 's':
 					// flag -s for ammount of solving
-					solveSettings = i + 1;
+					solveSettings = atoi(argv[i + 1]);
 					break;
 				default:
-					//probably just a grid location
+					//something went wrong - wrong flag
+					cout << "Unknown flag: -" << argv[i][1] << "\n";
 					break;
 			}
 		}
-		cout << "Solving " << argv[gridLocation] << "\n";
-		setUpField(arrField, argv[gridLocation]);
+		if (mode == 2) 
+		{
+			cout << "\nSolving " << argv[gridLocation] << "\n";
+			setUpField(arrField, argv[gridLocation]);
+		}else 
+		{
+			cout << "\nGenerating an " << argv[gridLocation] << " grid.";
+		}
 	}else
 	{
+		// with no args we set up an empty grid for the user to fill in
 		char a;
 		int i;
 		int j;
@@ -87,10 +90,13 @@ int main(int argc, const char *argv[])
 		}
 	}
 
-	cout << "Starting with: ";
- 	traceField(arrField);
-	cout << "\nSolved field: ";
-	solveField(arrField);
+	if (mode == 2) 
+	{
+		cout << "Starting with: ";
+		traceField(arrField);
+		cout << "\nSolved field: ";
+		solveField(arrField);
+	}
 
 	cin.get();
 	return 0;

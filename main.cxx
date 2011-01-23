@@ -201,8 +201,8 @@ int solveField(int fieldArr[9][9][2], int lastX, int lastY, int lastTry)
 				newField[isFreeX][isFreeY][0] = k + 1;
 				solved = solveField(newField);
 				// if you want solver to trace only the first solution, uncomment next 2 lines:
-				// if (solved == 2) 
-				// 	return 2;
+				if (solved == 2) 
+				 	return 2;
 			}
 		}
 	}
@@ -272,10 +272,11 @@ int generateField(int fieldArr[9][9][2], int difficulty, int fields)
 {
 	//generate field is going to work like this:
 	// 	create an empty field (filled with only 0)
-	// 	fill random cells with random numbers
+	// 	fill random cells with numbers 1-9
 	// 	solve the entire field
 	// 	recursively remove numbers until you get the desired difficulty
-	//first, create an empty field array
+
+	//create an empty field array
 	for (int i = 0; i < 9; ++i) 
 	{
 		for (int j = 0; j < 9; ++j) 
@@ -285,10 +286,20 @@ int generateField(int fieldArr[9][9][2], int difficulty, int fields)
 	}
 	// generate random numbers
 	srand((unsigned)time(NULL));
-	for (int k = 0; k < 15; ++k) 
+	for (int k = 0; k < 9; ++k) 
 	{
-		cout << int((double(rand())/RAND_MAX) * 9) << "\n";
+		int randomX = 0;
+		int randomY = 0;
+		do 
+		{
+			randomX = int((double(rand())/RAND_MAX) * 9);
+			randomY = int((double(rand())/RAND_MAX) * 9);
+		} while (fieldArr[randomX][randomY][0] != 0);
+		fieldArr[randomX][randomY][0] = k + 1;
 	}
+	//solve field
+	solveField(fieldArr);
+
 	cout << "\nGenerated field:";
 	traceField(fieldArr);
 	return 1;

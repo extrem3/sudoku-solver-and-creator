@@ -10,21 +10,21 @@ using std::cout;
 using std::ifstream;
 
 
-int setUpField(int fieldArr[9][9][2], const char* fileName);
-int solveField(int fieldArr[9][9][2], int solutions = 1);
-int analyzeField(int fieldArr[9][9][2], int solutions = 1);
+int setUpField(int fieldArr[9][9], const char* fileName);
+int solveField(int fieldArr[9][9], int solutions = 1);
+int analyzeField(int fieldArr[9][9], int solutions = 1);
 
-int generateField(int fieldArr[9][9][2], int difficulty, int fields = 0);
+int generateField(int fieldArr[9][9], int difficulty, int fields = 0);
 
-int getPossible(int x, int y, int fieldArr[9][9][2]);
-int getPossibleHorizontal(int line, int fieldArr[9][9][2]);
-int getPossibleVertical(int collumn, int fieldArr[9][9][2]);
-int getPossibleCube(int cube, int fieldArr[9][9][2]);
+int getPossible(int x, int y, int fieldArr[9][9]);
+int getPossibleHorizontal(int line, int fieldArr[9][9]);
+int getPossibleVertical(int collumn, int fieldArr[9][9]);
+int getPossibleCube(int cube, int fieldArr[9][9]);
 
-int traceField(int fieldArr[9][9][2], int solutions = 0, bool inserting = false);
+int traceField(int fieldArr[9][9], int solutions = 0, bool inserting = false);
 
 //this is ugly, but i had no energy to rewrite the whole thing :(
-int arrField[9][9][2];
+int arrField[9][9];
 
 int main(int argc, const char *argv[])
 {
@@ -80,7 +80,7 @@ int main(int argc, const char *argv[])
 		{
 			for (j = 0; j < 9; ++j) 
 			{
-				arrField[i][j][0] = 10;
+				arrField[i][j] = 10;
 			}
 		}
 		for (i = 0; i < 9; ++i) 
@@ -90,7 +90,7 @@ int main(int argc, const char *argv[])
 				traceField(arrField, 0, true);
 				cout << "Insert the number on field marked with \"_\" here and press [ENTER]: ";
 				cin >> a;
-				arrField[i][j][0] = a - '0';
+				arrField[i][j] = a - '0';
 				system("clear");
 			}
 		}
@@ -108,7 +108,7 @@ int main(int argc, const char *argv[])
 	return 0;
 }
 
-int setUpField(int fieldArr[9][9][2], const char* fileName) 
+int setUpField(int fieldArr[9][9], const char* fileName) 
 {
 	ifstream ifFile;
 	ifFile.open(fileName);
@@ -128,7 +128,7 @@ int setUpField(int fieldArr[9][9][2], const char* fileName)
 		} else if (ch != ' ') 
 		{
 			//ch is a number 0-9
-			fieldArr[y][x][0] = ch - '0';
+			fieldArr[y][x] = ch - '0';
 			++x;
 		}
 	}
@@ -138,7 +138,7 @@ int setUpField(int fieldArr[9][9][2], const char* fileName)
 
 
 
-int solveField(int fieldArr[9][9][2], int solutions)
+int solveField(int fieldArr[9][9], int solutions)
 {
 	int analyzed = analyzeField(fieldArr, solutions);
 	int solved = 0;
@@ -161,7 +161,7 @@ int solveField(int fieldArr[9][9][2], int solutions)
 		{
 			for (j = 0; j < 9; ++j) 
 			{
-				if (fieldArr[i][j][0] == 0) 
+				if (fieldArr[i][j] == 0) 
 				{
 					isFree = 3;
 					break;
@@ -184,23 +184,22 @@ int solveField(int fieldArr[9][9][2], int solutions)
 			if(temp > 0)
 			{
 				//copy the field array and at the same time check for the first empty field
-				int newField[9][9][2];
+				int newField[9][9];
 				int isFreeX = 9;
 				int isFreeY = 9;
 				for (int i2 = 0; i2 < 9; ++i2) 
 				{
 					for (int j2 = 0; j2 < 9; ++j2) 
 					{
-						newField[i2][j2][0] = fieldArr[i2][j2][0];
-						newField[i2][j2][1] = fieldArr[i2][j2][1];
-						if (fieldArr[i2][j2][0] == 0 && isFreeX == 9) 
+						newField[i2][j2] = fieldArr[i2][j2];
+						if (fieldArr[i2][j2] == 0 && isFreeX == 9) 
 						{
 							isFreeX = i2;
 							isFreeY = j2;
 						}
 					}
 				}
-				newField[isFreeX][isFreeY][0] = k + 1;
+				newField[isFreeX][isFreeY] = k + 1;
 				solved = solveField(newField, solutions);
 				// if you want solver to trace only the first solution, uncomment next 2 lines:
 				if (solved == 2 && solutions == 1) 
@@ -211,7 +210,7 @@ int solveField(int fieldArr[9][9][2], int solutions)
 	return solved;
 } //end of function solveField
 
-int analyzeField(int fieldArr[9][9][2], int solutions) 
+int analyzeField(int fieldArr[9][9], int solutions) 
 {
 	//analyzes field and puts numbers that are 100% possible in their places
 	//calls itself recursively until there are no more certain numbers
@@ -226,7 +225,7 @@ int analyzeField(int fieldArr[9][9][2], int solutions)
 	{
 		for (int j = 0; j < 9; ++j) 
 		{
-			if (fieldArr[i][j][0] == 0) 
+			if (fieldArr[i][j] == 0) 
 			{
 				isComplete = 0;
 				possibles = getPossible(j, i, fieldArr);
@@ -251,7 +250,7 @@ int analyzeField(int fieldArr[9][9][2], int solutions)
 					return 1;
 				}else if (used == 1) 
 				{
-					fieldArr[i][j][0] = currentOnly;
+					fieldArr[i][j] = currentOnly;
 					inserted = 1;
 				}
 			}
@@ -270,7 +269,7 @@ int analyzeField(int fieldArr[9][9][2], int solutions)
 
 
 
-int generateField(int fieldArr[9][9][2], int difficulty, int fields)
+int generateField(int fieldArr[9][9], int difficulty, int fields)
 {
 	//generate field is going to work like this:
 	// 	create an empty field (filled with only 0)
@@ -283,7 +282,7 @@ int generateField(int fieldArr[9][9][2], int difficulty, int fields)
 	{
 		for (int j = 0; j < 9; ++j) 
 		{
-			fieldArr[i][j][0] = 0;
+			fieldArr[i][j] = 0;
 		}
 	}
 	// generate random numbers
@@ -296,8 +295,8 @@ int generateField(int fieldArr[9][9][2], int difficulty, int fields)
 		{
 			randomX = int((double(rand())/RAND_MAX) * 9);
 			randomY = int((double(rand())/RAND_MAX) * 9);
-		} while (fieldArr[randomX][randomY][0] != 0);
-		fieldArr[randomX][randomY][0] = k + 1;
+		} while (fieldArr[randomX][randomY] != 0);
+		fieldArr[randomX][randomY] = k + 1;
 	}
 	//solve field
 	solveField(fieldArr, 1);
@@ -309,7 +308,7 @@ int generateField(int fieldArr[9][9][2], int difficulty, int fields)
 
 
 
-int getPossible(int x, int y, int fieldArr[9][9][2]) 
+int getPossible(int x, int y, int fieldArr[9][9]) 
 {
 	int column = getPossibleVertical(x, fieldArr);
 	int line = getPossibleHorizontal(y, fieldArr);
@@ -321,7 +320,7 @@ int getPossible(int x, int y, int fieldArr[9][9][2])
 	return result;
 } //end of function getPossible
 
-int getPossibleHorizontal(int line, int fieldArr[9][9][2])
+int getPossibleHorizontal(int line, int fieldArr[9][9])
 {
 	//returns int possibilities with bits turned on if number is possible, otherwise bit is turned off (also, we only care about bits on positions < 9)
 	//start with all bits turned on, so that we can later turn off the ones that are already used
@@ -329,7 +328,7 @@ int getPossibleHorizontal(int line, int fieldArr[9][9][2])
 	unsigned short int currentNumber;
 	for (int i = 0; i < 9; ++i) 
 	{
-		currentNumber = fieldArr[line][i][0];
+		currentNumber = fieldArr[line][i];
 		if (currentNumber != 0) 
 			//toggle the bit on position currentNumber so that it ends up being turned off
 			possible = possible ^ (1<<(currentNumber - 1));
@@ -346,14 +345,14 @@ int getPossibleHorizontal(int line, int fieldArr[9][9][2])
 	return possible;
 } //end of function getPossibleHorizontal
 
-int getPossibleVertical(int collumn, int fieldArr[9][9][2])
+int getPossibleVertical(int collumn, int fieldArr[9][9])
 {
 	//read the description of getPossibleHorizontal
 	unsigned short int possible = ~0;
 	unsigned short int currentNumber;
 	for (int i = 0; i < 9; ++i) 
 	{
-		currentNumber = fieldArr[i][collumn][0];
+		currentNumber = fieldArr[i][collumn];
 		if (currentNumber != 0) 
 			//toggle the bit on position currentNumber so that it ends up being turned off
 			possible = possible ^ (1<<(currentNumber - 1));
@@ -361,7 +360,7 @@ int getPossibleVertical(int collumn, int fieldArr[9][9][2])
 	return possible;
 } //end of function getPossibleHorizontal
 
-int getPossibleCube(int cube, int fieldArr[9][9][2]) 
+int getPossibleCube(int cube, int fieldArr[9][9]) 
 {
 	
 	//read the description of getPossibleHorizontal
@@ -373,7 +372,7 @@ int getPossibleCube(int cube, int fieldArr[9][9][2])
 	{
 		collumn = (cube % 3) * 3 + (i % 3);
 		line = (cube / 3) * 3 + (i / 3);
-		currentNumber = fieldArr[line][collumn][0];
+		currentNumber = fieldArr[line][collumn];
 		//cout << line << "x" << collumn << ": " << currentNumber << "\n";
 		if (currentNumber != 0) 
 			//toggle the bit on position currentNumber so that it ends up being turned off
@@ -383,7 +382,7 @@ int getPossibleCube(int cube, int fieldArr[9][9][2])
 } //end of function getPossibleCube
 
 
-int traceField(int fieldArr[9][9][2], int solutions,  bool inserting) 
+int traceField(int fieldArr[9][9], int solutions,  bool inserting) 
 {
 	//traces current field
 	int first10 = true;
@@ -399,7 +398,7 @@ int traceField(int fieldArr[9][9][2], int solutions,  bool inserting)
 				cout << " | ";
 			else 
 				cout << " ";
-			if (fieldArr[i][j][0] == 10) 
+			if (fieldArr[i][j] == 10) 
 			{
 				if (first10 == true) 
 				{
@@ -410,8 +409,8 @@ int traceField(int fieldArr[9][9][2], int solutions,  bool inserting)
 			}else
 			{
 				if (solutions == 1) 
-					arrField[i][j][0] = fieldArr[i][j][0];
-				cout << fieldArr[i][j][0];
+					arrField[i][j] = fieldArr[i][j];
+				cout << fieldArr[i][j];
 			}
 		}
 	}

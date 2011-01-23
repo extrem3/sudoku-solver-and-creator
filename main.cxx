@@ -158,8 +158,9 @@ int solveField(int fieldArr[9][9][2], int lastX, int lastY, int lastTry)
 				}
 				newField[isFreeX][isFreeY][0] = k + 1;
 				solved = solveField(newField);
-				if (solved == 2) 
-					return 2;
+				// if you want solver to trace only the first solution, uncomment next 2 lines:
+				// if (solved == 2) 
+				// 	return 2;
 			}
 		}
 	}
@@ -214,7 +215,7 @@ int analyzeField(int fieldArr[9][9][2])
 	}
 	int analyzed = 0;
 	if (isComplete == 1) 
-		//traceField(fieldArr);
+		// traceField(fieldArr);
 		return 2;
 	if (inserted != 0) 
 		//if we have inserted at least one number into the field, analyze it again

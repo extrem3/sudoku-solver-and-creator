@@ -28,25 +28,39 @@ int main(int argc, const char *argv[])
 	int arrField[9][9][2];
 	if (argc >= 2) 
 	{
-		int gridLocation = 0;
+		// possible calls:
+		// 	./main [gridLocation] -s (all|first)			mode 2
+		// 	./main -d (e|m|h|w) -s (numberOfDigits)			mode 1
+
+		// mode can be 2 for solving and 1 for generating grid
+		int mode = 2;
+		int gridLocation = 1;
 		int solveSettings = 0;
-		for (int i = 1; i < argc; i+=2) 
+
+		if (argv[1][0] == '-') 
+			mode = 1;
+		else 
+			mode = 2;
+
+		for (int i = mode; i < argc - (mode - 1); i+=2) 
 		{
+			cout << "flag " << argv[i][1] << " is set to " << argv[i + 1] << "\n";
 			switch (argv[i][1]) 
 			{
 				case 'g':
+					// flag -g for grid location
 					gridLocation = i + 1;
 					break;
 				case 's':
+					// flag -s for ammount of solving
 					solveSettings = i + 1;
 					break;
 				default:
 					//probably just a grid location
-					gridLocation = i;
 					break;
 			}
 		}
-		cout << "Solving " << argv[gridLocation] << "\n\n";
+		cout << "Solving " << argv[gridLocation] << "\n";
 		setUpField(arrField, argv[gridLocation]);
 	}else
 	{

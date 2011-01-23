@@ -11,8 +11,8 @@ using std::ifstream;
 
 
 int setUpField(int fieldArr[9][9][2], const char* fileName);
-int solveField(int fieldArr[9][9][2], int lastX = 9, int lastY = 9, int lastTry = 9);
-int analyzeField(int fieldArr[9][9][2]);
+int solveField(int fieldArr[9][9][2], int solutions = 1);
+int analyzeField(int fieldArr[9][9][2], int solutions = 1);
 
 int generateField(int fieldArr[9][9][2], int difficulty, int fields = 0);
 
@@ -21,12 +21,14 @@ int getPossibleHorizontal(int line, int fieldArr[9][9][2]);
 int getPossibleVertical(int collumn, int fieldArr[9][9][2]);
 int getPossibleCube(int cube, int fieldArr[9][9][2]);
 
-int traceField(int fieldArr[9][9][2], bool inserting = false);
+int traceField(int fieldArr[9][9][2], int solutions = 0, bool inserting = false);
+
+//this is ugly, but i had no energy to rewrite the whole thing :(
+int arrField[9][9][2];
 
 int main(int argc, const char *argv[])
 {
 	//contains the field data
-	int arrField[9][9][2];
 	int mode = 2;
 	if (argc >= 2) 
 	{
@@ -85,7 +87,7 @@ int main(int argc, const char *argv[])
 		{
 			for (j = 0; j < 9; ++j) 
 			{
-				traceField(arrField, true);
+				traceField(arrField, 0, true);
 				cout << "Insert the number on field marked with \"_\" here and press [ENTER]: ";
 				cin >> a;
 				arrField[i][j][0] = a - '0';
@@ -99,7 +101,7 @@ int main(int argc, const char *argv[])
 		cout << "Starting with: ";
 		traceField(arrField);
 		cout << "\nSolved field: ";
-		solveField(arrField);
+		solveField(arrField, 0);
 	}
 
 	cin.get();
@@ -136,9 +138,9 @@ int setUpField(int fieldArr[9][9][2], const char* fileName)
 
 
 
-int solveField(int fieldArr[9][9][2], int lastX, int lastY, int lastTry)
+int solveField(int fieldArr[9][9][2], int solutions)
 {
-	int analyzed = analyzeField(fieldArr);
+	int analyzed = analyzeField(fieldArr, solutions);
 	int solved = 0;
 	if (analyzed == 2)
 	{
@@ -171,7 +173,7 @@ int solveField(int fieldArr[9][9][2], int lastX, int lastY, int lastTry)
 		if (isFree == 9) 
 		{
 			//if all fields are full, this sudoku is obv solved and we have to trace it to the user.
-			traceField(fieldArr);
+			traceField(fieldArr, solutions);
 			return 2;
 		}
 		//guess the next possible move on this field
@@ -199,9 +201,9 @@ int solveField(int fieldArr[9][9][2], int lastX, int lastY, int lastTry)
 					}
 				}
 				newField[isFreeX][isFreeY][0] = k + 1;
-				solved = solveField(newField);
+				solved = solveField(newField, solutions);
 				// if you want solver to trace only the first solution, uncomment next 2 lines:
-				if (solved == 2) 
+				if (solved == 2 && solutions == 1) 
 				 	return 2;
 			}
 		}
@@ -209,7 +211,7 @@ int solveField(int fieldArr[9][9][2], int lastX, int lastY, int lastTry)
 	return solved;
 } //end of function solveField
 
-int analyzeField(int fieldArr[9][9][2]) 
+int analyzeField(int fieldArr[9][9][2], int solutions) 
 {
 	//analyzes field and puts numbers that are 100% possible in their places
 	//calls itself recursively until there are no more certain numbers
@@ -261,7 +263,7 @@ int analyzeField(int fieldArr[9][9][2])
 		return 2;
 	if (inserted != 0) 
 		//if we have inserted at least one number into the field, analyze it again
-		analyzed = analyzeField(fieldArr);
+		analyzed = analyzeField(fieldArr, solutions);
 	//error. return 0
 	return 0;
 } //end of function analyzeField
@@ -298,7 +300,7 @@ int generateField(int fieldArr[9][9][2], int difficulty, int fields)
 		fieldArr[randomX][randomY][0] = k + 1;
 	}
 	//solve field
-	solveField(fieldArr);
+	solveField(fieldArr, 1);
 
 	cout << "\nGenerated field:";
 	traceField(fieldArr);
@@ -381,7 +383,7 @@ int getPossibleCube(int cube, int fieldArr[9][9][2])
 } //end of function getPossibleCube
 
 
-int traceField(int fieldArr[9][9][2], bool inserting) 
+int traceField(int fieldArr[9][9][2], int solutions,  bool inserting) 
 {
 	//traces current field
 	int first10 = true;
@@ -406,7 +408,11 @@ int traceField(int fieldArr[9][9][2], bool inserting)
 				}else 
 					cout << " ";
 			}else
+			{
+				if (solutions == 1) 
+					arrField[i][j][0] = fieldArr[i][j][0];
 				cout << fieldArr[i][j][0];
+			}
 		}
 	}
 	cout << "\n";

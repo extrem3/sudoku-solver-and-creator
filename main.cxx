@@ -1,3 +1,20 @@
+// THE ARGUMENT SUPPORT STILL IN DEV
+// all arguments are optional, if no arguments are passed, solver will generate an empty grid for the user to fill (0 for empty cell, other number for cell filled with that number)
+//
+// ./main
+// 		commands:
+// 			solve - solves a field
+// 			generate - generates a field (not yet working)
+// 		synopsis:
+// 			./int main solve [-s ] FILE
+// 			./int main generate [-s ]
+// 		options
+// 			-s NUMBER
+// 				if solving the grid, NUMBER=0 traces all possible solutions for sudoku grid, NUMBER=1 traces only one
+// 				if generating the grid, it indicates the number of cells to blank out
+// 			FILE
+// 				a location of grid to be solved, saved in .txt (or any other) format
+
 #include <iostream>
 #include <stdlib.h>
 #include <fstream>
@@ -290,13 +307,26 @@ int generateField(int fieldArr[9][9], int difficulty, int fields)
 
 	//create an empty field array
 	for (int i = 0; i < 9; ++i) 
-	{
 		for (int j = 0; j < 9; ++j) 
-		{
 			fieldArr[i][j] = 0;
+
+	// generate random numbers
+	// to rethink
+	for (int i2 = 0; i2 < 9; ++i2) 
+	{
+		for (int j2 = 0; j2 < 9; ++j2) 
+		{
+			fieldArr[i2][j2] = 0;
+			int number = getPossible(j2, i2, fieldArr);
+			for (int k = 0; k < 9; ++k) 
+			{
+				int temp = number & (1 << k);
+				if(temp > 0)
+					cout << "available";
+			}
 		}
 	}
-	// generate random numbers
+
 	srand((unsigned)time(NULL));
 	for (int k = 0; k < 9; ++k) 
 	{
@@ -309,8 +339,6 @@ int generateField(int fieldArr[9][9], int difficulty, int fields)
 		} while (fieldArr[randomX][randomY] != 0);
 		fieldArr[randomX][randomY] = k + 1;
 	}
-	//solve field
-	solveField(fieldArr, 1);
 
 	cout << "\nGenerated field:";
 	traceField(fieldArr);

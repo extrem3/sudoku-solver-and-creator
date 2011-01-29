@@ -7,6 +7,7 @@
 
 using std::cin;
 using std::cout;
+using std::string;
 using std::ifstream;
 
 
@@ -23,37 +24,43 @@ int getPossibleCube(int cube, int fieldArr[9][9]);
 
 int traceField(int fieldArr[9][9], bool inserting = false);
 
-//this is ugly, but i had no energy to rewrite the whole thing :(
+// possible calls:
+//  	1 	 2 	  3  	4 									  5
+// 	./main solve -s (number (0=all,other=numberOfSolutions)) [gridLocation] 		mode=2 		solving grid
+// 	./main generate -s (numberOfDigits)												mode=1 		generating grid
+// 	./main 																			mode=3 		solving grid
 
 int main(int argc, const char *argv[])
 {
 	//contains the field data
 	int arrField[9][9];
+	//are we supposed to generate or solve field?
 	int mode = 2;
-	int solutions = 1;
+	//if we are generating grid this is number of empty cells, and if we are solving it, this is the number of soutions to display
+	int s = 1; 
 	if (argc >= 2) 
 	{
-		// possible calls:
-		// 	./main [gridLocation] -s (number (0=all,other=numberOfSolutions))			mode=2 		solving grid
-		// 	./main -d (e|m|h|w) -s (numberOfDigits)										mode=1 		generating grid
 		int gridLocation = 1;
 
-		if (argv[1][0] == '-') 
+		if (argv[1][0] == 'g') 
 			mode = 1;
+		else if (argv[1][0] == 's') 
+		{
+			if (argc % 2 == 1) 
+				mode = 3;
+			else 
+				mode = 2;
+		}
 
 		//check flags only
-		for (int i = mode; i < argc - (mode - 1); i+=2) 
+		for (int i = 2; i < (argc / 2) * 2; i+=2) 
 		{
 			cout << "flag " << argv[i][1] << " is set to " << argv[i + 1] << "\n";
 			switch (argv[i][1]) 
 			{
-				case 'd':
-					// flag -d for difficulty
-					gridLocation = i + 1;
-					break;
 				case 's':
 					// flag -s for ammount of solving
-					solutions = atoi(argv[i + 1]);
+					s = atoi(argv[i + 1]);
 					break;
 				default:
 					//something went wrong - wrong flag
@@ -62,16 +69,17 @@ int main(int argc, const char *argv[])
 					break;
 			}
 		}
-		if (mode == 2) 
+		if (mode == 3) 
 		{
-			cout << "\nSolving " << argv[gridLocation] << "\n";
-			setUpField(arrField, argv[gridLocation]);
-		}else 
+			cout << "\n\nSolving " << argv[argc - 1] << "\n";
+			setUpField(arrField, argv[argc - 1]);
+		}else if (mode == 1) 
 		{
-			cout << "\nGenerating an " << argv[gridLocation] << " grid.";
+			cout << "\n\nGenerating an " << argv[gridLocation] << " grid.";
 			generateField(arrField, 2);
 		}
-	}else
+	}
+	if (mode == 2 || argc < 2) 
 	{
 		// with no args we set up an empty grid for the user to fill in
 		char a;
@@ -97,12 +105,12 @@ int main(int argc, const char *argv[])
 		}
 	}
 
-	if (mode == 2) 
+	if (mode == 2 || mode == 3) 
 	{
 		cout << "Starting with: ";
 		traceField(arrField);
 		cout << "\nSolved field: ";
-		int isDone = solveField(arrField, solutions);
+		int isDone = solveField(arrField, s);
 		if (isDone != 2) 
 			cout << "\n\nIt appears there was an error while evaluating your grid. \nPlease double check that sudoku grid you inserted is valid.\n";
 	}

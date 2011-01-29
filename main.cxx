@@ -101,7 +101,7 @@ int main(int argc, const char *argv[])
 		cout << "Starting with: ";
 		traceField(arrField);
 		cout << "\nSolved field: ";
-		solveField(arrField, 0);
+		solveField(arrField, 1);
 	}
 
 	cin.get();
@@ -202,7 +202,7 @@ int solveField(int fieldArr[9][9], int solutions)
 				newField[isFreeX][isFreeY] = k + 1;
 				solved = solveField(newField, solutions);
 				// if you want solver to trace only the first solution, uncomment next 2 lines:
-				if (solved == 2) 
+				if (solved == 2 && solutions != 0) 
 				 	return 2;
 			}
 		}

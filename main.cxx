@@ -30,13 +30,13 @@ int main(int argc, const char *argv[])
 	//contains the field data
 	int arrField[9][9];
 	int mode = 2;
+	int solutions = 1;
 	if (argc >= 2) 
 	{
 		// possible calls:
 		// 	./main [gridLocation] -s (number (0=all,other=numberOfSolutions))			mode=2 		solving grid
 		// 	./main -d (e|m|h|w) -s (numberOfDigits)										mode=1 		generating grid
 		int gridLocation = 1;
-		int solveSettings = 0;
 
 		if (argv[1][0] == '-') 
 			mode = 1;
@@ -53,11 +53,12 @@ int main(int argc, const char *argv[])
 					break;
 				case 's':
 					// flag -s for ammount of solving
-					solveSettings = atoi(argv[i + 1]);
+					solutions = atoi(argv[i + 1]);
 					break;
 				default:
 					//something went wrong - wrong flag
 					cout << "Unknown flag: " << argv[i] << "\n";
+					return 1;
 					break;
 			}
 		}
@@ -101,7 +102,9 @@ int main(int argc, const char *argv[])
 		cout << "Starting with: ";
 		traceField(arrField);
 		cout << "\nSolved field: ";
-		solveField(arrField, 1);
+		int isDone = solveField(arrField, solutions);
+		if (isDone != 2) 
+			cout << "\n\nIt appears there was an error while evaluating your grid. \nPlease double check that sudoku grid you inserted is valid.\n";
 	}
 
 	cin.get();

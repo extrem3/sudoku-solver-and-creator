@@ -21,14 +21,14 @@ int getPossibleHorizontal(int line, int fieldArr[9][9]);
 int getPossibleVertical(int collumn, int fieldArr[9][9]);
 int getPossibleCube(int cube, int fieldArr[9][9]);
 
-int traceField(int fieldArr[9][9], int solutions = 0, bool inserting = false);
+int traceField(int fieldArr[9][9], bool inserting = false);
 
 //this is ugly, but i had no energy to rewrite the whole thing :(
-int arrField[9][9];
 
 int main(int argc, const char *argv[])
 {
 	//contains the field data
+	int arrField[9][9];
 	int mode = 2;
 	if (argc >= 2) 
 	{
@@ -87,7 +87,7 @@ int main(int argc, const char *argv[])
 		{
 			for (j = 0; j < 9; ++j) 
 			{
-				traceField(arrField, 0, true);
+				traceField(arrField, true);
 				cout << "Insert the number on field marked with \"_\" here and press [ENTER]: ";
 				cin >> a;
 				arrField[i][j] = a - '0';
@@ -173,7 +173,7 @@ int solveField(int fieldArr[9][9], int solutions)
 		if (isFree == 9) 
 		{
 			//if all fields are full, this sudoku is obv solved and we have to trace it to the user.
-			traceField(fieldArr, solutions);
+			traceField(fieldArr);
 			return 2;
 		}
 		//guess the next possible move on this field
@@ -202,7 +202,7 @@ int solveField(int fieldArr[9][9], int solutions)
 				newField[isFreeX][isFreeY] = k + 1;
 				solved = solveField(newField, solutions);
 				// if you want solver to trace only the first solution, uncomment next 2 lines:
-				if (solved == 2 && solutions == 1) 
+				if (solved == 2) 
 				 	return 2;
 			}
 		}
@@ -382,7 +382,7 @@ int getPossibleCube(int cube, int fieldArr[9][9])
 } //end of function getPossibleCube
 
 
-int traceField(int fieldArr[9][9], int solutions,  bool inserting) 
+int traceField(int fieldArr[9][9],  bool inserting) 
 {
 	//traces current field
 	int first10 = true;
@@ -408,8 +408,6 @@ int traceField(int fieldArr[9][9], int solutions,  bool inserting)
 					cout << " ";
 			}else
 			{
-				if (solutions == 1) 
-					arrField[i][j] = fieldArr[i][j];
 				cout << fieldArr[i][j];
 			}
 		}

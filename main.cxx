@@ -322,23 +322,23 @@ int generateField(int fieldArr[9][9], int difficulty, int fields)
 			{
 				int temp = number & (1 << k);
 				if(temp > 0)
-					cout << "available";
+					fieldArr[i2][j2] = k + 1;
 			}
 		}
 	}
 
-	srand((unsigned)time(NULL));
-	for (int k = 0; k < 9; ++k) 
-	{
-		int randomX = 0;
-		int randomY = 0;
-		do 
-		{
-			randomX = int((double(rand())/RAND_MAX) * 9);
-			randomY = int((double(rand())/RAND_MAX) * 9);
-		} while (fieldArr[randomX][randomY] != 0);
-		fieldArr[randomX][randomY] = k + 1;
-	}
+	// srand((unsigned)time(NULL));
+	// for (int k = 0; k < 9; ++k) 
+	// {
+	// 	int randomX = 0;
+	// 	int randomY = 0;
+	// 	do 
+	// 	{
+	// 		randomX = int((double(rand())/RAND_MAX) * 9);
+	// 		randomY = int((double(rand())/RAND_MAX) * 9);
+	// 	} while (fieldArr[randomX][randomY] != 0);
+	// 	fieldArr[randomX][randomY] = k + 1;
+	// }
 
 	cout << "\nGenerated field:";
 	traceField(fieldArr);

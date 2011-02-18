@@ -325,6 +325,10 @@ int generateField(int fieldArr[9][9], int difficulty, int fields)
 					fieldArr[i2][j2] = k + 1;
 			}
 		}
+		if (1) 
+		{
+			cout << "generated";
+		}
 	}
 
 	// srand((unsigned)time(NULL));

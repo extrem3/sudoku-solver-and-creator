@@ -316,18 +316,48 @@ int generateField(int fieldArr[9][9], int difficulty, int fields)
 	{
 		for (int j2 = 0; j2 < 9; ++j2) 
 		{
-			fieldArr[i2][j2] = 0;
 			int number = getPossible(j2, i2, fieldArr);
+			// store possible values in the tempArr array
+			int tempArr[9];
+			int arrLen = 0;
 			for (int k = 0; k < 9; ++k) 
 			{
 				int temp = number & (1 << k);
 				if(temp > 0)
-					fieldArr[i2][j2] = k + 1;
+				{
+					tempArr[arrLen] = k + 1;
+					arrLen ++;
+				}
 			}
-		}
-		if (1) 
-		{
-			cout << "generated";
+			srand((unsigned)time(NULL));
+			int randomPos;
+			do 
+			{
+				// select a random number and store it in randomPos
+				srand((unsigned)time(NULL));
+				cout << "\n";
+				randomPos = int((double(rand())/RAND_MAX) * arrLen);
+				for (int a = 0; a < arrLen; ++a) 
+				{
+					cout << tempArr[a] << ",";
+				}
+				cout << "trying " << tempArr[randomPos] << " on position " << i2 << "x" << j2;
+				if (tempArr[randomPos] == 256) 
+				{
+					break;
+				}
+				// write the number into fieldArr
+				fieldArr[i2][j2] = tempArr[randomPos];
+				for (int g = 0; g < arrLen; ++g) 
+				{
+					// remove used number from the array (basically split.join)
+					if (g < randomPos) 
+						tempArr[g] = tempArr[g];
+					else
+						tempArr[g] = tempArr[g + 1];
+				}
+				-- arrLen;
+			} while (solveField(fieldArr, 1) != 2);
 		}
 	}
 

@@ -29,10 +29,10 @@ using std::ifstream;
 
 
 int setUpField(int fieldArr[9][9], const char* fileName);
-int solveField(int fieldArr[9][9], int solutions = 1);
-int analyzeField(int fieldArr[9][9], int solutions = 1);
+int solveField(int fieldArr[9][9], int solutions = 1, bool silent = false);
+int analyzeField(int fieldArr[9][9], int solutions = 1, bool silent = false);
 
-int generateField(int fieldArr[9][9], int difficulty, int fields = 0);
+int generateField(int fieldArr[9][9], int fields = 0, bool silent = true);
 
 int getPossible(int x, int y, int fieldArr[9][9]);
 int getPossibleHorizontal(int line, int fieldArr[9][9]);
@@ -94,7 +94,10 @@ int main(int argc, const char *argv[])
 		}else if (mode == 1) 
 		{
 			cout << "\n\nGenerating an " << argv[gridLocation] << " grid.";
-			generateField(arrField, 2);
+			do 
+			{
+				
+			} while (generateField(arrField, 2,true) != 2);
 		}
 	}
 	if (mode == 2 || argc < 2) 
@@ -167,9 +170,9 @@ int setUpField(int fieldArr[9][9], const char* fileName)
 
 
 
-int solveField(int fieldArr[9][9], int solutions)
+int solveField(int fieldArr[9][9], int solutions, bool silent)
 {
-	int analyzed = analyzeField(fieldArr, solutions);
+	int analyzed = analyzeField(fieldArr, solutions, silent);
 	int solved = 0;
 	if (analyzed == 2)
 	{
@@ -202,7 +205,8 @@ int solveField(int fieldArr[9][9], int solutions)
 		if (isFree == 9) 
 		{
 			//if all fields are full, this sudoku is obv solved and we have to trace it to the user.
-			traceField(fieldArr);
+			if (!silent) 
+				traceField(fieldArr);
 			return 2;
 		}
 		//guess the next possible move on this field
@@ -229,7 +233,7 @@ int solveField(int fieldArr[9][9], int solutions)
 					}
 				}
 				newField[isFreeX][isFreeY] = k + 1;
-				solved = solveField(newField, solutions);
+				solved = solveField(newField, solutions, silent);
 				// if you want solver to trace only the first solution, uncomment next 2 lines:
 				if (solved == 2 && solutions != 0) 
 				 	return 2;
@@ -239,7 +243,7 @@ int solveField(int fieldArr[9][9], int solutions)
 	return solved;
 } //end of function solveField
 
-int analyzeField(int fieldArr[9][9], int solutions) 
+int analyzeField(int fieldArr[9][9], int solutions, bool silent) 
 {
 	//analyzes field and puts numbers that are 100% possible in their places
 	//calls itself recursively until there are no more certain numbers
@@ -291,14 +295,14 @@ int analyzeField(int fieldArr[9][9], int solutions)
 		return 2;
 	if (inserted != 0) 
 		//if we have inserted at least one number into the field, analyze it again
-		analyzed = analyzeField(fieldArr, solutions);
+		analyzed = analyzeField(fieldArr, solutions, silent);
 	//error. return 0
 	return 0;
 } //end of function analyzeField
 
 
 
-int generateField(int fieldArr[9][9], int difficulty, int fields)
+int generateField(int fieldArr[9][9], int fields, bool silent)
 {
 	//generate field is going to work like this:
 	// 	create an empty field (filled with only 0)
@@ -313,6 +317,7 @@ int generateField(int fieldArr[9][9], int difficulty, int fields)
 
 	// generate random numbers
 	// to rethink
+	srand((unsigned)time(NULL));
 	for (int i2 = 0; i2 < 9; ++i2) 
 	{
 		for (int j2 = 0; j2 < 9; ++j2) 
@@ -327,40 +332,45 @@ int generateField(int fieldArr[9][9], int difficulty, int fields)
 				int temp = number & (1 << k);
 				if(temp > 0)
 				{
-					cout << k + 1 << ", ";
 					tempArr[arrLen] = k + 1;
 					arrLen ++;
 				}
 			}
 			if (arrLen == 0) 
 			{
-				cout << "WTF";
-				traceField(fieldArr);
-				cout << "\n";
-				traceBits(number);
-				cout << "\n";
-				traceBits(getPossibleVertical(i2, fieldArr));
-				cout << "\n";
-				traceBits(getPossibleHorizontal(j2, fieldArr));
-				cout << "\n";
-				traceBits(getPossibleCube(((j2 / 3) * 3 + (i2 / 3)), fieldArr));;
+				if (!silent) 
+				{
+					cout << "WTF";
+					traceField(fieldArr);
+					cout << "\n";
+					traceBits(number);
+					cout << "\n";
+					traceBits(getPossibleVertical(i2, fieldArr));
+					cout << "\n";
+					traceBits(getPossibleHorizontal(j2, fieldArr));
+					cout << "\n";
+					traceBits(getPossibleCube(((j2 / 3) * 3 + (i2 / 3)), fieldArr));;
+				}else
+				{
+					return 1;
+				}
 			}
-				cout << "\n";
-			srand((unsigned)time(NULL));
 			int randomPos;
 			do 
 			{
-				srand((unsigned)time(NULL));
 				// select a random number and store it in randomPos
 				randomPos = int((double(rand())/RAND_MAX) * (arrLen));
 				// write the number into fieldArr
 				fieldArr[i2][j2] = tempArr[randomPos];
-				cout << "[";
-				for (int a = 0; a < arrLen; ++a) 
+				if (!silent) 
 				{
-					cout << tempArr[a] << ",";
+					cout << "[";
+					for (int a = 0; a < arrLen; ++a) 
+					{
+						cout << tempArr[a] << ",";
+					}
+					cout << "] | length=" << arrLen << " trying tempArr[" << randomPos << "] (" << tempArr[randomPos] << ") on position " << i2 << "x" << j2 << "\n";
 				}
-				cout << "] | length=" << arrLen << " trying tempArr[" << randomPos << "] (" << tempArr[randomPos] << ") on position " << i2 << "x" << j2 << "\n";
 				for (int g = 0; g < arrLen - 1; ++g) 
 				{
 					// remove used number from the array (basically split.join)
@@ -370,26 +380,13 @@ int generateField(int fieldArr[9][9], int difficulty, int fields)
 						tempArr[g] = tempArr[g + 1];
 				}
 				-- arrLen;
-			} while (solveField(fieldArr, 1) != 2 && arrLen >= 0);
+			} while (solveField(fieldArr, 1, silent) != 2 && arrLen >= 0);
 		}
 	}
 
-	// srand((unsigned)time(NULL));
-	// for (int k = 0; k < 9; ++k) 
-	// {
-	// 	int randomX = 0;
-	// 	int randomY = 0;
-	// 	do 
-	// 	{
-	// 		randomX = int((double(rand())/RAND_MAX) * 9);
-	// 		randomY = int((double(rand())/RAND_MAX) * 9);
-	// 	} while (fieldArr[randomX][randomY] != 0);
-	// 	fieldArr[randomX][randomY] = k + 1;
-	// }
-
 	cout << "\nGenerated field:";
 	traceField(fieldArr);
-	return 1;
+	return 2;
 } //end of function generateField
 
 

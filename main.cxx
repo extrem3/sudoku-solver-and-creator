@@ -40,6 +40,7 @@ int getPossibleVertical(int collumn, int fieldArr[9][9]);
 int getPossibleCube(int cube, int fieldArr[9][9]);
 
 int traceField(int fieldArr[9][9], bool inserting = false);
+int traceBits(int number);
 
 // possible calls:
 //  	1 	 2 	  3  	4 									  5
@@ -316,6 +317,7 @@ int generateField(int fieldArr[9][9], int difficulty, int fields)
 	{
 		for (int j2 = 0; j2 < 9; ++j2) 
 		{
+			fieldArr[i2][j2] = 0;
 			int number = getPossible(j2, i2, fieldArr);
 			// store possible values in the tempArr array
 			int tempArr[9];
@@ -325,30 +327,41 @@ int generateField(int fieldArr[9][9], int difficulty, int fields)
 				int temp = number & (1 << k);
 				if(temp > 0)
 				{
+					cout << k + 1 << ", ";
 					tempArr[arrLen] = k + 1;
 					arrLen ++;
 				}
 			}
+			if (arrLen == 0) 
+			{
+				cout << "WTF";
+				traceField(fieldArr);
+				cout << "\n";
+				traceBits(number);
+				cout << "\n";
+				traceBits(getPossibleVertical(i2, fieldArr));
+				cout << "\n";
+				traceBits(getPossibleHorizontal(j2, fieldArr));
+				cout << "\n";
+				traceBits(getPossibleCube(((j2 / 3) * 3 + (i2 / 3)), fieldArr));;
+			}
+				cout << "\n";
 			srand((unsigned)time(NULL));
 			int randomPos;
 			do 
 			{
-				// select a random number and store it in randomPos
 				srand((unsigned)time(NULL));
-				cout << "\n";
-				randomPos = int((double(rand())/RAND_MAX) * arrLen);
+				// select a random number and store it in randomPos
+				randomPos = int((double(rand())/RAND_MAX) * (arrLen));
+				// write the number into fieldArr
+				fieldArr[i2][j2] = tempArr[randomPos];
+				cout << "[";
 				for (int a = 0; a < arrLen; ++a) 
 				{
 					cout << tempArr[a] << ",";
 				}
-				cout << "trying " << tempArr[randomPos] << " on position " << i2 << "x" << j2;
-				if (tempArr[randomPos] == 256) 
-				{
-					break;
-				}
-				// write the number into fieldArr
-				fieldArr[i2][j2] = tempArr[randomPos];
-				for (int g = 0; g < arrLen; ++g) 
+				cout << "] | length=" << arrLen << " trying tempArr[" << randomPos << "] (" << tempArr[randomPos] << ") on position " << i2 << "x" << j2 << "\n";
+				for (int g = 0; g < arrLen - 1; ++g) 
 				{
 					// remove used number from the array (basically split.join)
 					if (g < randomPos) 
@@ -357,7 +370,7 @@ int generateField(int fieldArr[9][9], int difficulty, int fields)
 						tempArr[g] = tempArr[g + 1];
 				}
 				-- arrLen;
-			} while (solveField(fieldArr, 1) != 2);
+			} while (solveField(fieldArr, 1) != 2 && arrLen >= 0);
 		}
 	}
 
@@ -488,3 +501,16 @@ int traceField(int fieldArr[9][9],  bool inserting)
 	cout << "\n";
 	return 0;
 } //end of function traceField
+
+int traceBits(int number) 
+{
+	for (int i = 0; i < 9; ++i) 
+	{
+		if (number & (1 << i)) 
+		{
+			cout << "1";
+		}else
+			cout << "0";
+	}
+	return 1;
+} //end of function traceBits

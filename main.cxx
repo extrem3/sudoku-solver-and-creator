@@ -118,9 +118,15 @@ int main(int argc, const char *argv[])
 			for (j = 0; j < 9; ++j) 
 			{
 				traceField(arrField, true);
-				cout << "Insert the number on field marked with \"_\" here and press [ENTER]: ";
+				cout << "Insert the number [0-9] on field marked with \"_\" here and press [ENTER]: ";
 				cin >> a;
-				arrField[i][j] = a - '0';
+				if (a == '.')
+				{
+					arrField[i][j] = 0;
+				}else
+				{
+					arrField[i][j] = a - '0';
+				}
 				system("clear");
 			}
 		}
@@ -145,24 +151,24 @@ int setUpField(int fieldArr[9][9], const char* fileName)
 	ifstream ifFile;
 	ifFile.open(fileName);
 	char ch;
-	int x = 0;
-	int y = 0;
+	int totalChars = 1;
 	while(!ifFile.eof())
 	{
 		ifFile.get(ch);
-		if (ch == '\n') 
+		if (ch != ' ' && ch != '\n') 
 		{
-			//go to the new line
-			++y;
-			if (y > 8) 
-				break;
-			x = 0;
-		} else if (ch != ' ') 
-		{
-			//ch is a number 0-9
-			fieldArr[y][x] = ch - '0';
-			++x;
+			//ch is a number 0-9 or .
+			if (ch == '.') 
+			{
+				fieldArr[(totalChars - 1) / 9][(totalChars - 1) % 9] = 0;
+			}else 
+			{
+				fieldArr[(totalChars - 1) / 9][(totalChars - 1) % 9] = ch - '0';
+			}
+			cout << (totalChars - 1)/9 << "x" << (totalChars - 1) % 9 << "\n";
+			++totalChars;
 		}
+
 	}
 	ifFile.close();
 	return 0;

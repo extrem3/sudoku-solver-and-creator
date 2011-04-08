@@ -1,19 +1,6 @@
 // THE ARGUMENT SUPPORT STILL IN DEV
 // all arguments are optional, if no arguments are passed, solver will generate an empty grid for the user to fill (0 for empty cell, other number for cell filled with that number)
 //
-// ./main
-// 		commands:
-// 			solve - solves a field
-// 			generate - generates a field (not yet working)
-// 		synopsis:
-// 			./int main solve [-s ] FILE
-// 			./int main generate [-s ]
-// 		options
-// 			-s NUMBER
-// 				if solving the grid, NUMBER=0 traces all possible solutions for sudoku grid, NUMBER=1 traces only one
-// 				if generating the grid, it indicates the number of cells to blank out
-// 			FILE
-// 				a location of grid to be solved, saved in .txt (or any other) format
 
 #include <iostream>
 #include <stdlib.h>
@@ -68,6 +55,28 @@ int main(int argc, const char *argv[])
 				mode = 3;
 			else 
 				mode = 2;
+		}else if (argv[1][1] == 'h' || argv[1][2] == 'h')
+		{
+			cout << "usage: ./main [options] [-s NUMBER] [FILE]" << "\n";
+			cout << "\n";
+			cout << "options:" << "\n";
+			cout << "	solve - solves a field" << "\n";
+			cout << "	generate - generates a field" << "\n";
+			cout << "-s NUMBER" << "\n";
+			cout << "	when solving the grid, NUMBER=0 traces all possible solutions for sudoku grid, NUMBER=1 traces only one" << "\n";
+			cout << "	when generating the grid, it indicates the number of cells to blank out" << "\n";
+			cout << "FILE" << "\n";
+			cout << "	when solving a grid, it refers to a location of grid to be solved, saved in .txt (or any other) format" << "\n";
+			cout << "\n";
+			cout << "usage examples:" << "\n";
+			cout << "	./main" << "\n";
+			cout << "		Generate an empty grid and prompt the user to input fields" << "\n";
+			cout << "	./main solve -s 0 sudokuGrid.txt" << "\n";
+			cout << "		Trace all possible solutions to the grid stored inside sudokuGrid.txt" << "\n";
+			cout << "	./main generate -s 30" << "\n";
+			cout << "		Generate a \"random\" grid with 30 empty fields" << "\n";
+			cin.get();
+			return 0;
 		}
 
 		//check flags only
@@ -76,6 +85,23 @@ int main(int argc, const char *argv[])
 			cout << "flag " << argv[i][1] << " is set to " << argv[i + 1] << "\n";
 			switch (argv[i][1]) 
 			{
+				case 'h':
+					// flag -s for ammount of solving
+					cout << "./main" << "\n";
+					cout << "	commands:" << "\n";
+					cout << "		solve - solves a field" << "\n";
+					cout << "		generate - generates a field (not yet working)" << "\n";
+					cout << "	synopsis:" << "\n";
+					cout << "		./int main solve [-s ] FILE" << "\n";
+					cout << "		./int main generate [-s ]" << "\n";
+					cout << "	options" << "\n";
+					cout << "		-s NUMBER" << "\n";
+					cout << "			if solving the grid, NUMBER=0 traces all possible solutions for sudoku grid, NUMBER=1 traces only one" << "\n";
+					cout << "			if generating the grid, it indicates the number of cells to blank out" << "\n";
+					cout << "		FILE" << "\n";
+					cout << "			a location of grid to be solved, saved in .txt (or any other) format" << "\n";
+					cin.get();
+					return 0;
 				case 's':
 					// flag -s for ammount of solving
 					s = atoi(argv[i + 1]);
@@ -93,7 +119,7 @@ int main(int argc, const char *argv[])
 			setUpField(arrField, argv[argc - 1]);
 		}else if (mode == 1) 
 		{
-			cout << "\n\nGenerating an " << argv[gridLocation] << " grid.";
+			cout << "\n\nGenerating a grid.";
 			do 
 			{
 				

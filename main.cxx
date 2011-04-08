@@ -97,7 +97,7 @@ int main(int argc, const char *argv[])
 			do 
 			{
 				
-			} while (generateField(arrField, 2,true) != 2);
+			} while (generateField(arrField, s, true) != 2);
 		}
 	}
 	if (mode == 2 || argc < 2) 
@@ -390,7 +390,19 @@ int generateField(int fieldArr[9][9], int fields, bool silent)
 		}
 	}
 
+	cout << "\nSolved field:";
+	traceField(fieldArr);
 	cout << "\nGenerated field:";
+	int newLocation = int((double(rand())/RAND_MAX) * (81));
+	for (int i3 = 0; i3 < fields; ++i3) 
+	{
+		while (fieldArr[newLocation / 9][newLocation % 9] == 0) 
+		{
+			newLocation = int((double(rand())/RAND_MAX) * (81));
+		}
+		fieldArr[newLocation / 9][newLocation % 9] = 0;
+	}
+
 	traceField(fieldArr);
 	return 2;
 } //end of function generateField

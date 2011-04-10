@@ -191,7 +191,7 @@ int setUpField(int fieldArr[9][9], const char* fileName)
 			{
 				fieldArr[(totalChars - 1) / 9][(totalChars - 1) % 9] = ch - '0';
 			}
-			cout << (totalChars - 1)/9 << "x" << (totalChars - 1) % 9 << "\n";
+			// cout << (totalChars - 1)/9 << "x" << (totalChars - 1) % 9 << "\n";
 			++totalChars;
 		}
 
@@ -515,13 +515,15 @@ int traceField(int fieldArr[9][9],  bool inserting)
 	int first10 = true;
 	for (int i = 0; i < 9; ++i) 
 	{
-		if (i == 3 || i == 6) 
-			cout << "\n-------+-------+-------\n";
+		if (i == 0)
+			cout << "\n +-----------------------+\n";
+		else if (i == 3 || i == 6) 
+			cout << "\n |-------+-------+-------|\n";
 		else 
 			cout << "\n";
 		for (int j = 0; j < 9; ++j) 
 		{
-			if (j == 3 || j == 6) 
+			if (j == 0 || j == 3 || j == 6) 
 				cout << " | ";
 			else 
 				cout << " ";
@@ -535,9 +537,19 @@ int traceField(int fieldArr[9][9],  bool inserting)
 					cout << " ";
 			}else
 			{
-				cout << fieldArr[i][j];
+				if (fieldArr[i][j] == 0) 
+				{
+					cout << ".";
+				}else
+				{
+					cout << fieldArr[i][j];
+				}
 			}
+			if (j == 8)
+				cout << " | ";
 		}
+		if (i == 8)
+			cout << "\n +-----------------------+\n";
 	}
 	cout << "\n";
 	return 0;

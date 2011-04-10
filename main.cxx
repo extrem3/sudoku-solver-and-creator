@@ -120,10 +120,7 @@ int main(int argc, const char *argv[])
 		}else if (mode == 1) 
 		{
 			cout << "\n\nGenerating a grid.";
-			do 
-			{
-				
-			} while (generateField(arrField, s, true) != 2);
+			for( ; (generateField(arrField, s, true) != 2 && (s > 0 && s < 81)); ){}
 		}
 	}
 	if (mode == 2 || argc < 2) 
@@ -336,6 +333,11 @@ int analyzeField(int fieldArr[9][9], int solutions, bool silent)
 
 int generateField(int fieldArr[9][9], int fields, bool silent)
 {
+	if (!(fields > 0 && fields < 81)) 
+	{
+		cout << "Please supply a valid number of fields to be blanked out [1-80]";
+		return 0;
+	}
 	//generate field is going to work like this:
 	// 	create an empty field (filled with only 0)
 	// 	fill random cells with numbers 1-9
